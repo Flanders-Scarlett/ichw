@@ -17,7 +17,7 @@
    更详细的讲，cache的结构其实和内存的结构类似，也包含地址和内容，只是cache的内容除了存的数据（data）之外，还包含存的数据的物理内存的地址信息（tag），因为CPU发出的寻址信息都是针对物理内存发出的，所以cache中除了要保存数据信息之外，还要保存数据对应的地址，这样才能在cache中根据物理内存的地址信息查找物理内存中对应的数据。（当然为了加快寻找速度，cache中一般还包含一个有效位（valid），用来标记这个cache line是否保存着有效的数据）。一个tag和它对应的数据组成的一行称为一个cache line。如下图所示，下表中的一行就是一个cache line。
     
     
-![图3](https://img-blog.csdn.net/20171123110419140)
+![图3](https://github.com/Flanders-Scarlett/ichw/blob/master/TIM%E6%88%AA%E5%9B%BE20181008103659.png?raw=true)
 
 
                                            图3   cache的基本结构
@@ -27,13 +27,13 @@
 知道了cache的结构之后，如何在cache中去寻找对应的数据呢？简单起见，我们先选择 直接映射的cache组成方式进行下文的分析。
 
 首先对于一段物理内存（block），该物理内存上的每个字节的地址划分为以下几段：[3]
-![图4](https://img-blog.csdn.net/20171123144706226)
+![图4](https://github.com/Flanders-Scarlett/ichw/blob/master/TIM%E6%88%AA%E5%9B%BE20181008103706.png?raw=true)
 
 
                                            图4   处理器物理内存地址的划分
 
 这样的话物理内存中的数据到cache的映射关系如下图5所示：
-![图5](https://img-blog.csdn.net/20171123144810407)
+![图5](https://github.com/Flanders-Scarlett/ichw/blob/master/TIM%E6%88%AA%E5%9B%BE20181008103718.png?raw=true)
 
 
                                            图5  cache的查找过程
