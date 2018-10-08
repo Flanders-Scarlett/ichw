@@ -2,7 +2,7 @@
 ![图1](https://raw.githubusercontent.com/Flanders-Scarlett/ichw/master/TIM%E6%88%AA%E5%9B%BE20181008103641.png)
 
 
-                                           图1内存的结构
+                                           图1  内存的结构
 
    上图的0000-0008是地址，A-I是存的数据，cpu根据地址去寻找数据。图中的一个字母代表一个字节的数据。    
 
