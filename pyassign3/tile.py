@@ -62,7 +62,7 @@ def assert_square(a,b,c,d,wall,f=0):
         all_ans=[ans]
     return all_ans
 def ksh(all_ans,a,b,c,d):
-    '''可视化谐音，选择某种方法进行可视化'''
+    '''选择某种方法进行可视化'''
     bh=len(all_ans) #方法总数
     turtle.setup(0.9,0.9)
     hb=turtle.Turtle()
