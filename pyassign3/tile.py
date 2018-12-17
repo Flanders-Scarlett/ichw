@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """tile.py: 解决铺砖方法.
 __author__ = "Fu Yixuan"
 __pkuid__  = "1800011720"
@@ -19,7 +17,7 @@ def brick(h,c,d,a,wall):
             wall[f]=0 
     atuple=tuple(alist)
     return atuple
-def qu(h,c,d,a,wall):
+def qingchu(h,c,d,a,wall):
     '''对已铺上砖的区域清掉，区域状态变为其标记数h '''
     x=(h+1)%a #转为二维坐标
     y=(h+1)//a
@@ -27,8 +25,8 @@ def qu(h,c,d,a,wall):
         for j in range(y,y+d):
             f=i+j*a-1
             wall[f]=f
-def pd(a,b,c,d,wall,f):
-    '''pd,判断谐音。判断区域是否可铺 '''
+def assert_puzhuan(a,b,c,d,wall,f):
+    '''判断区域是否可铺 '''
     if f%a+c>a or f//a+d>b:
         return False #铺出墙外的情况
     else:
@@ -38,8 +36,8 @@ def pd(a,b,c,d,wall,f):
                 if j not in wall:
                     ky=False #其右上角部分区域已被铺上的情况
         return ky    
-def pz(a,b,c,d,wall,f):
-    '''铺砖谐音，递归铺砖至铺满墙，f为单位区域的标记数 范围从0至a*b-1'''
+def puzhuan(a,b,c,d,wall,f):
+    '''递归铺砖至铺满墙，f为单位区域的标记数 范围从0至a*b-1'''
     all_ans=[]
     if f==a*b:
         return[[]]
@@ -48,17 +46,17 @@ def pz(a,b,c,d,wall,f):
         if f==a*b:
             return[[]]
     for (c,d) in [(c,d),(d,c)]:
-        if pd(a,b,c,d,wall,f) is True:
+        if assert_puzhuan(a,b,c,d,wall,f) is True:
             atuple=brick(f,c,d,a,wall)
-            ans=pz(a,b,c,d,wall,f+1)
+            ans=puzhuan(a,b,c,d,wall,f+1)
             for i in ans:
                 i.append(atuple)
             all_ans.extend(ans)
-            qu(f,c,d,a,wall)
+            qingchu(f,c,d,a,wall)
     return all_ans
-def pdpd(a,b,c,d,wall,f=0):
+def assert_square(a,b,c,d,wall,f=0):
     '''由于砖为正方形时实际只有一种铺法，故在判断一次砖是否为正方形'''
-    all_ans=pz(a,b,c,d,wall,f=0)
+    all_ans=puzhuan(a,b,c,d,wall,f=0)
     if c==d:
         ans=list(all_ans[0])
         all_ans=[ans]
@@ -122,7 +120,7 @@ def main():
     wall=[]
     for i in range(0,a*b):
         wall.append(i)
-    all_ans=pdpd(a,b,c,d,wall,f=0)
+    all_ans=assert_square(a,b,c,d,wall,f=0)
     print('有',len(all_ans),'种方案',all_ans)
     ksh(all_ans,a,b,c,d)
 if __name__ == '__main__':
