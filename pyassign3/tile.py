@@ -3,125 +3,192 @@ __author__ = "Fu Yixuan"
 __pkuid__  = "1800011720"
 __email__  = "Fu Yixuan@pku.edu.cn"
 """
-import turtle
-def brick(h,c,d,a,wall):
-    '''对于被铺上砖的区域，将其状态记为0，并将砖块打包进入atuple '''
-    alist=[]
-    x=(h+1)%a #将单位区域的标记数转换为二维坐标
-    y=(h+1)//a
-    for i in range(x,x+c):
-        '''将从标记数为h的单位区域的右上角铺上砖 '''
-        for j in range(y,y+d):
-            f=i+j*a-1
-            alist.append(f) #将砖打包进alist
-            wall[f]=0 
-    atuple=tuple(alist)
-    return atuple
-def qingchu(h,c,d,a,wall):
-    '''对已铺上砖的区域清掉，区域状态变为其标记数h '''
-    x=(h+1)%a #转为二维坐标
-    y=(h+1)//a
-    for i in range(x,x+c):
-        for j in range(y,y+d):
-            f=i+j*a-1
-            wall[f]=f
-def assert_puzhuan(a,b,c,d,wall,f):
-    '''判断区域是否可铺 '''
-    if f%a+c>a or f//a+d>b:
-        return False #铺出墙外的情况
+
+def transk(k):
+    #坐标与方块标号之间的转化#
+    i = k % m
+    j = k // m
+    return(i,j)
+
+def transij(i,j):
+    #坐标与方块标号之间的转化#
+    k = i + j * m
+    return(k)
+
+def finds(wall):
+    #寻找没铺过砖的位置坐标#
+    for i in range(m):
+        for j in range(n):
+            if wall[i][j] == 0:
+                return i,j
+
+def assert_brick(x,y,aa,bb,wall):
+    #判断在(x，y)处是否可以铺砖#
+    t = 0
+    if x + aa < m + 1 and y + bb < n + 1:
+        for i in range(aa):
+            for j in range(bb):
+                if wall[x+i][y+j] == 1:
+                    t += 1
+        if t == 0:
+            return True
     else:
-        ky=True
-        for i in range(f,f+c):
-            for j in range(i,i+a*d,a):
-                if j not in wall:
-                    ky=False #其右上角部分区域已被铺上的情况
-        return ky    
-def puzhuan(a,b,c,d,wall,f):
-    '''递归铺砖至铺满墙，f为单位区域的标记数 范围从0至a*b-1'''
-    all_ans=[]
-    if f==a*b:
-        return[[]]
-    while f not in wall:
-        f+=1
-        if f==a*b:
-            return[[]]
-    for (c,d) in [(c,d),(d,c)]:
-        if assert_puzhuan(a,b,c,d,wall,f) is True:
-            atuple=brick(f,c,d,a,wall)
-            ans=puzhuan(a,b,c,d,wall,f+1)
-            for i in ans:
-                i.append(atuple)
-            all_ans.extend(ans)
-            qingchu(f,c,d,a,wall)
-    return all_ans
-def assert_square(a,b,c,d,wall,f=0):
-    '''由于砖为正方形时实际只有一种铺法，故在判断一次砖是否为正方形'''
-    all_ans=puzhuan(a,b,c,d,wall,f=0)
-    if c==d:
-        ans=list(all_ans[0])
-        all_ans=[ans]
-    return all_ans
-def ksh(all_ans,a,b,c,d):
-    '''选择某种方法进行可视化'''
-    bh=len(all_ans) #方法总数
-    turtle.setup(0.9,0.9)
-    hb=turtle.Turtle()
-    turtle.title('将选择的方案可视化')
-    fn=int(turtle.numinput('请选择方案','方案可选编号:1--'+str(bh),1,1,bh))
-    fn=fn-1 #由于list从零开始，而非从一开始，故减一
-    fn=all_ans[fn] #将方法取出
-    hb.speed(0)
-    turtle.setworldcoordinates(-a/4,-b/4,a*5/4,b*5/4)
-    for i in range(2): #画出墙
-        hb.forward(a)
-        hb.left(90)
-        hb.forward(b)
-        hb.left(90)
-    for i in range(1,a): #画出区域
-        hb.penup()
-        hb.goto(i,0)
-        hb.pendown()
-        hb.goto(i,b)
-    for i in range(1,b): #画出区域
-        hb.penup()
-        hb.goto(0,i)
-        hb.pendown()
-        hb.goto(a,i)
-    hb.pensize(6)
-    for i in fn: #铺砖
-        hb.color('blue')
-        x1=(i[0])%a
-        y1=(i[0])//a
-        x2=(i[c*d-1])%a+1
-        y2=(i[c*d-1])//a+1 #确定砖的四角坐标
-        hb.penup()
-        hb.goto(x1,y1)
-        hb.pendown()
-        hb.goto(x1,y2)
-        hb.goto(x2,y2)
-        hb.goto(x2,y1)
-        hb.goto(x1,y1) #铺砖
-    for i in range(a*b): #加上单位区域的标记数
-        x=i%a
-        y=i//a
-        hb.penup()
-        hb.goto(x+1/2,y+1/2)
-        hb.write(i,False,'center')
-    hb.ht()
+        return False
+
+def puzhuan(ans):
+    #开始铺砖#
+    global m,n,a,b
+    z = 0
+    Q = finds(wall)
+    if Q == None:
+        all_ans.append(ans.copy())
+    else :
+        brick = []
+        x = Q[0]
+        y = Q[1]
+        if assert_brick(x,y,a,b,wall)==True:
+            for i in range(a):
+                for j in range(b):
+                    if wall[x+i][y+j] == 1:
+                        break
+                    wall[x+i][y+j] = 1
+                    brick.append(transij(x+i,y+j))
+            tbrick = tuple(brick)
+            ans.append(tbrick)
+            puzhuan(ans)
+            for i in range(a):
+                for j in range(b):
+                    wall[x+i][y+j] = 0
+            brick = []
+            ans.pop()          
+            
+        if assert_brick(x,y,b,a,wall)==True:
+            for i in range(b):
+                for j in range(a):
+                    if wall[x+i][y+j] == 1:
+                        break
+                    wall[x+i][y+j] = 1
+                    brick.append(transij(x+i,y+j))
+            tbrick = tuple(brick)
+            ans.append(tbrick)
+            puzhuan(ans)
+            for i in range(b):
+                for j in range(a):
+                    wall[x+i][y+j] = 0
+            brick = []
+            ans.pop()
+            
+        return all_ans
+    
+def square_brick(a,b,w):
+    #判断如果为砖为正方形，实际上只有一种方法#
+    all_w = []
+    if a == b:
+        all_w.append(w[0])
+    else:
+        all_w = w
+    return all_w
+
+def assert_puzhuan(w):
+    #判断如果无法密铺时，结果w应为空列表，输出无法被铺满#
+    if w == []:
+        print('在这种方案下墙无法被铺满')
+    return w
+
+def main_puzhuan():
+    m = int(input("请输入墙的长度："))
+    n = int(input("请输入墙的宽度："))
+    a = int(input("请输入砖的长度："))
+    b = int(input("请输入砖的宽度："))
+    all_ans = []
+    wall = []
+    for i in range(m):
+        wlist = []
+        for j in range(n):
+            wlist.append(0)
+        wall.append(wlist)
+    w = puzhuan([])
+    w = square_brick(a,b,w)
+    w = assert_puzhuan(w)
+    if type(w) == list:
+        print("共有"+str(len(w))+"种方案，分别如下")
+        print(w)
+    else:
+        print(w)
+    return w
+
+def draw_wall(tur):
+    #画墙#
+    tur.pensize(2)
+    tur.color('blue')
+    tur.pu()
+    
+    for j in range(n+1):
+        tur.goto(-30*m , 30*n-60*j)
+        tur.pd()
+        tur.fd(60*m)
+        tur.pu()   
+    tur.rt(90)
+        
+    for i in range(m+1):
+        tur.goto(-30*m+60*i , 30*n)
+        tur.pd()
+        tur.fd(60*n)
+        tur.pu()
+    tur.lt(90)
+
+def draw_number(tur):
+    #填数字#
+    tur.pensize(2)
+    tur.color('blue')
+    
+    for j in range(n):
+        tur.goto(-30*m+30 , 30*n-30-60*j)
+        for i in range(m):
+            tur.write(j*m+i,True,align='center')
+            tur.fd(60)
+
+def draw_brick(i1,i2,j1,j2,tur):
+    #画砖#
+    tur.pensize(4)
+    tur.color('black')
+    tur.pu()
+    tur.goto(-30*m+60*i1,30*n-60*j1)
+    tur.pd()
+    tur.goto(-30*m+60*i1,30*n-60*j2)
+    tur.goto(-30*m+60*i2,30*n-60*j2)
+    tur.goto(-30*m+60*i2,30*n-60*j1)
+    tur.goto(-30*m+60*i1,30*n-60*j1)
+    tur.pu()
+
+def exchange_brick(plan,tur):
+    #将砖转化为坐标#
+    for i in range(len(plan)):
+        tbrick1 = transk(plan[i][0])
+        tbrick2 = transk(plan[i][-1])
+        i1 = tbrick1[0]
+        i2 = tbrick2[0]+1
+        j1 = tbrick1[1]
+        j2 = tbrick2[1]+1
+        print(i1,i2,j1,j2)
+        draw_brick(i1,i2,j1,j2,tur)
+    
+def main_turtle(all_plan):
+    import turtle
+    t = len(all_plan)
+    s = int(turtle.numinput('Select plan','Input number of 1 - '+str(t),1,1,t))
+    plan = all_plan[s-1]
+    tur = turtle.Turtle()
+    tur.ht()
+    tur.speed(5)
+    draw_wall(tur)
+    draw_number(tur)
+    exchange_brick(plan,tur)
+
 def main():
-    a=int(input('请输入您要铺的墙壁长度：'))
-    b=int(input('请输入您要铺的墙壁高度：'))
-    c=int(input('请输入您要铺的砖的长度：'))
-    d=int(input('其输入您要铺的砖的宽度：'))
-    if a*b % (c*d)==0:
-        print('您所选择的砖符合要求')
-    else:
-        print('您所选择的砖不符合要求，会报错')
-    wall=[]
-    for i in range(0,a*b):
-        wall.append(i)
-    all_ans=assert_square(a,b,c,d,wall,f=0)
-    print('有',len(all_ans),'种方案',all_ans)
-    ksh(all_ans,a,b,c,d)
+    w = main_puzhuan()
+    if type(w) == list:
+       main_turtle(w) 
+
 if __name__ == '__main__':
     main()
