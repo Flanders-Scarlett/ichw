@@ -36,17 +36,16 @@ def assert_brick(x,y,aa,bb,wall):
         return False
 
 def puzhuan(ans):
-    #开始铺砖#
-    global m,n,a,b
+    #开始铺砖，思路与教学网上思路一致#
     z = 0
     Q = finds(wall)
-    if Q == None:
+    if Q == None: #判断如果墙均被铺满，即无没铺的砖时，输出一个结果#
         all_ans.append(ans.copy())
-    else :
+    else : #迭代铺砖#
         brick = []
         x = Q[0]
         y = Q[1]
-        if assert_brick(x,y,a,b,wall)==True:
+        if assert_brick(x,y,a,b,wall)==True: #横着铺#
             for i in range(a):
                 for j in range(b):
                     if wall[x+i][y+j] == 1:
@@ -56,13 +55,13 @@ def puzhuan(ans):
             tbrick = tuple(brick)
             ans.append(tbrick)
             puzhuan(ans)
-            for i in range(a):
+            for i in range(a):   #铺完这块砖之后，再拆掉这块砖#
                 for j in range(b):
                     wall[x+i][y+j] = 0
             brick = []
             ans.pop()          
             
-        if assert_brick(x,y,b,a,wall)==True:
+        if assert_brick(x,y,b,a,wall)==True: #竖着铺#
             for i in range(b):
                 for j in range(a):
                     if wall[x+i][y+j] == 1:
@@ -72,7 +71,7 @@ def puzhuan(ans):
             tbrick = tuple(brick)
             ans.append(tbrick)
             puzhuan(ans)
-            for i in range(b):
+            for i in range(b):  #铺完这块砖之后，再拆掉这块砖#
                 for j in range(a):
                     wall[x+i][y+j] = 0
             brick = []
@@ -162,7 +161,7 @@ def draw_brick(i1,i2,j1,j2,tur):
     tur.pu()
 
 def exchange_brick(plan,tur):
-    #将砖转化为坐标#
+    #将砖转化为砖四个角的坐标#
     for i in range(len(plan)):
         tbrick1 = transk(plan[i][0])
         tbrick2 = transk(plan[i][-1])
@@ -180,7 +179,7 @@ def main_turtle(all_plan):
     plan = all_plan[s-1]
     tur = turtle.Turtle()
     tur.ht()
-    tur.speed(5)
+    tur.speed(4)
     draw_wall(tur)
     draw_number(tur)
     exchange_brick(plan,tur)
