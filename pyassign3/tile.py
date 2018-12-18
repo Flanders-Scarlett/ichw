@@ -47,7 +47,7 @@ def puzhuan(ans):
         y = Q[1]
         if assert_brick(x,y,a,b,wall)==True: #横着铺#
             for i in range(a):
-                for j in range(b)：
+                for j in range(b):
                     wall[x+i][y+j] = 1     #铺过的位置设为1#
                     brick.append(transij(x+i,y+j))
             tbrick = tuple(brick)
