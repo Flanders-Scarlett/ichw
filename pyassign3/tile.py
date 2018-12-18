@@ -16,7 +16,7 @@ def transij(i,j):
     return(k)
 
 def finds(wall):
-    #寻找没铺过砖的位置坐标#
+    #寻找没铺过砖的位置坐标，如果没有输出None#
     for i in range(m):
         for j in range(n):
             if wall[i][j] == 0:
@@ -25,10 +25,10 @@ def finds(wall):
 def assert_brick(x,y,aa,bb,wall):
     #判断在(x，y)处是否可以铺砖#
     t = 0
-    if x + aa < m + 1 and y + bb < n + 1:
-        for i in range(aa):
+    if x + aa < m + 1 and y + bb < n + 1:   #判断是否会铺出墙外#
+        for i in range(aa):           #判断是否所铺位置均未未铺#
             for j in range(bb):
-                if wall[x+i][y+j] == 1:
+                if wall[x+i][y+j] == 1:  
                     t += 1
         if t == 0:
             return True
@@ -47,10 +47,8 @@ def puzhuan(ans):
         y = Q[1]
         if assert_brick(x,y,a,b,wall)==True: #横着铺#
             for i in range(a):
-                for j in range(b):
-                    if wall[x+i][y+j] == 1:
-                        break
-                    wall[x+i][y+j] = 1
+                for j in range(b)：
+                    wall[x+i][y+j] = 1     #铺过的位置设为1#
                     brick.append(transij(x+i,y+j))
             tbrick = tuple(brick)
             ans.append(tbrick)
@@ -64,9 +62,7 @@ def puzhuan(ans):
         if assert_brick(x,y,b,a,wall)==True: #竖着铺#
             for i in range(b):
                 for j in range(a):
-                    if wall[x+i][y+j] == 1:
-                        break
-                    wall[x+i][y+j] = 1
+                    wall[x+i][y+j] = 1    #铺过的位置设为1#
                     brick.append(transij(x+i,y+j))
             tbrick = tuple(brick)
             ans.append(tbrick)
@@ -100,7 +96,7 @@ def main_puzhuan():
     a = int(input("请输入砖的长度："))
     b = int(input("请输入砖的宽度："))
     all_ans = []
-    wall = []
+    wall = []     #定义墙，所有位置为0#
     for i in range(m):
         wlist = []
         for j in range(n):
