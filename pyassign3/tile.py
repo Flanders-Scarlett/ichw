@@ -4,25 +4,27 @@ __pkuid__  = "1800011720"
 __email__  = "Fu Yixuan@pku.edu.cn"
 """
 
-def transk(k):
+
+
+def transk(k,a,b,m,n):
     #坐标与方块标号之间的转化#
     i = k % m
     j = k // m
     return(i,j)
 
-def transij(i,j):
+def transij(i,j,a,b,m,n):
     #坐标与方块标号之间的转化#
     k = i + j * m
     return(k)
 
-def finds(wall):
+def finds(wall,a,b,m,n):
     #寻找没铺过砖的位置坐标，如果没有输出None#
     for i in range(m):
         for j in range(n):
             if wall[i][j] == 0:
                 return i,j
 
-def assert_brick(x,y,aa,bb,wall):
+def assert_brick(x,y,aa,bb,wall,m,n):
     #判断在(x，y)处是否可以铺砖#
     t = 0
     if x + aa < m + 1 and y + bb < n + 1:   #判断是否会铺出墙外#
@@ -35,38 +37,38 @@ def assert_brick(x,y,aa,bb,wall):
     else:
         return False
 
-def puzhuan(ans):
+def puzhuan(ans,wall,a,b,m,n,all_ans):
     #开始铺砖，思路与教学网上思路一致#
     z = 0
-    Q = finds(wall)
+    Q = finds(wall,a,b,m,n)
     if Q == None: #判断如果墙均被铺满，即无没铺的砖时，输出一个结果#
         all_ans.append(ans.copy())
     else : #迭代铺砖#
         brick = []
         x = Q[0]
         y = Q[1]
-        if assert_brick(x,y,a,b,wall)==True: #横着铺#
+        if assert_brick(x,y,a,b,wall,m,n)==True: #横着铺#
             for i in range(a):
                 for j in range(b):
                     wall[x+i][y+j] = 1     #铺过的位置设为1#
-                    brick.append(transij(x+i,y+j))
+                    brick.append(transij(x+i,y+j,a,b,m,n))
             tbrick = tuple(brick)
             ans.append(tbrick)
-            puzhuan(ans)
+            puzhuan(ans,wall,a,b,m,n,all_ans)
             for i in range(a):   #铺完这块砖之后，再拆掉这块砖#
                 for j in range(b):
                     wall[x+i][y+j] = 0
             brick = []
             ans.pop()          
             
-        if assert_brick(x,y,b,a,wall)==True: #竖着铺#
+        if assert_brick(x,y,b,a,wall,m,n)==True: #竖着铺#
             for i in range(b):
                 for j in range(a):
                     wall[x+i][y+j] = 1    #铺过的位置设为1#
-                    brick.append(transij(x+i,y+j))
+                    brick.append(transij(x+i,y+j,a,b,m,n))
             tbrick = tuple(brick)
             ans.append(tbrick)
-            puzhuan(ans)
+            puzhuan(ans,wall,a,b,m,n,all_ans)
             for i in range(b):  #铺完这块砖之后，再拆掉这块砖#
                 for j in range(a):
                     wall[x+i][y+j] = 0
@@ -102,7 +104,7 @@ def main_puzhuan():
         for j in range(n):
             wlist.append(0)
         wall.append(wlist)
-    w = puzhuan([])
+    w = puzhuan([],wall,a,b,m,n,all_ans)
     w = square_brick(a,b,w)
     w = assert_puzhuan(w)
     if type(w) == list:
@@ -110,9 +112,9 @@ def main_puzhuan():
         print(w)
     else:
         print(w)
-    return w
+    return w,a,b,m,n
 
-def draw_wall(tur):
+def draw_wall(tur,a,b,m,n):
     #画墙#
     tur.pensize(2)
     tur.color('blue')
@@ -132,7 +134,7 @@ def draw_wall(tur):
         tur.pu()
     tur.lt(90)
 
-def draw_number(tur):
+def draw_number(tur,a,b,m,n):
     #填数字#
     tur.pensize(2)
     tur.color('blue')
@@ -143,7 +145,7 @@ def draw_number(tur):
             tur.write(j*m+i,True,align='center')
             tur.fd(60)
 
-def draw_brick(i1,i2,j1,j2,tur):
+def draw_brick(i1,i2,j1,j2,tur,a,b,m,n):
     #画砖#
     tur.pensize(4)
     tur.color('black')
@@ -156,19 +158,18 @@ def draw_brick(i1,i2,j1,j2,tur):
     tur.goto(-30*m+60*i1,30*n-60*j1)
     tur.pu()
 
-def exchange_brick(plan,tur):
+def exchange_brick(plan,tur,a,b,m,n):
     #将砖转化为砖四个角的坐标#
     for i in range(len(plan)):
-        tbrick1 = transk(plan[i][0])
-        tbrick2 = transk(plan[i][-1])
+        tbrick1 = transk(plan[i][0],a,b,m,n)
+        tbrick2 = transk(plan[i][-1],a,b,m,n)
         i1 = tbrick1[0]
         i2 = tbrick2[0]+1
         j1 = tbrick1[1]
         j2 = tbrick2[1]+1
-        print(i1,i2,j1,j2)
-        draw_brick(i1,i2,j1,j2,tur)
+        draw_brick(i1,i2,j1,j2,tur,a,b,m,n)
     
-def main_turtle(all_plan):
+def main_turtle(all_plan,a,b,m,n):
     import turtle
     t = len(all_plan)
     s = int(turtle.numinput('Select plan','Input number of 1 - '+str(t),1,1,t))
@@ -176,14 +177,14 @@ def main_turtle(all_plan):
     tur = turtle.Turtle()
     tur.ht()
     tur.speed(4)
-    draw_wall(tur)
-    draw_number(tur)
-    exchange_brick(plan,tur)
+    draw_wall(tur,a,b,m,n)
+    draw_number(tur,a,b,m,n)
+    exchange_brick(plan,tur,a,b,m,n)
 
 def main():
-    w = main_puzhuan()
-    if type(w) == list:
-       main_turtle(w) 
+    alw = main_puzhuan()
+    if type(alw[0]) == list:
+       main_turtle(alw[0],alw[1],alw[2],alw[3],alw[4]) 
 
 if __name__ == '__main__':
     main()
