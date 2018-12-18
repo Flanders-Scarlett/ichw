@@ -89,7 +89,7 @@ def square_brick(a,b,w):
 def assert_puzhuan(w):
     #判断如果无法密铺时，结果w应为空列表，输出无法被铺满#
     if w == []:
-        print('在这种方案下墙无法被铺满')
+        w = '在这种方案下墙无法被铺满'
     return w
 
 def main_puzhuan():
